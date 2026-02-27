@@ -7,10 +7,10 @@
 3. The Brain vs The App (models vs interfaces)
 
 ### Part 2: How It Works
-4. Models: fast/cheap vs smart/expensive (GPT-5.2, Sonnet 4.6, Gemini 3 Pro)
+4. Models: fast/cheap vs smart/expensive (GPT-5.2, Sonnet 4.6, Gemini 2.5 Pro)
 5. Free tiers vs paid — pricing truth (free now has ads on ChatGPT!)
-6. What's an API key
-7. OAuth vs API key
+6. What's an API key — pay-as-you-go, you see exact cost, for custom programs this is the ONLY option
+7. OAuth vs API key — OAuth lets apps (OpenClaw, Claude Code) use your existing subscription (Pro/Max plan), no extra cost but tokens count against limits; API key = pay per token, see exact dollar cost
 
 ### Part 3: What AI Can Do
 8. Image gen, voice, vision, Deep Research, agents (quick demos)

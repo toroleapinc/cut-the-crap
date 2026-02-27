@@ -4,7 +4,7 @@
 
 | AI | Made By | Best At | Sign Up |
 |----|---------|---------|---------|
-| **ChatGPT** | OpenAI | Image gen, all-rounder, plugins, coding (GPT-5.3-Codex) | [chatgpt.com](https://chatgpt.com) |
+| **ChatGPT** | OpenAI | Image gen, all-rounder, plugins, coding (GPT-5.2-Codex) | [chatgpt.com](https://chatgpt.com) |
 | **Claude** | Anthropic | Writing, analysis, long docs (1M tokens), careful answers | [claude.ai](https://claude.ai) |
 | **Gemini** | Google | Google integration, Deep Research, generous free tier | [gemini.google.com](https://gemini.google.com) |
 
@@ -12,9 +12,9 @@
 
 | Need | OpenAI | Anthropic | Google |
 |------|--------|-----------|--------|
-| Quick & cheap | GPT-5.2 mini | Haiku 3.5 | Gemini 3 Flash |
-| Everyday work | GPT-5.2 | **Sonnet 4.6** ⭐ | Gemini 3 Pro |
-| Maximum power | GPT-5.3-Codex | **Opus 4.6** | Gemini 3 Pro (Thinking) |
+| Quick & cheap | GPT-4.1-nano / GPT-5-mini | Haiku 3.5 | Gemini 2.5 Flash |
+| Everyday work | GPT-4.1 / GPT-5.2 | **Sonnet 4.6** ⭐ | Gemini 2.5 Pro |
+| Maximum power | GPT-5.2-Codex | **Opus 4.6** | Gemini 2.5 Pro (Thinking) |
 
 ⭐ **Sonnet 4.6** is now the default for free Claude users — near-Opus quality at a fraction of the cost.
 
@@ -24,11 +24,11 @@
 
 | Tier | ChatGPT | Claude | Gemini |
 |------|---------|--------|--------|
-| **Free** | GPT-5.2 (limited, has ads) | Sonnet 4.6 (limited) | 3 Flash + limited 3 Pro |
+| **Free** | GPT-5.2 (limited, has ads) | Sonnet 4.6 (limited) | 2.5 Flash + limited 2.5 Pro |
 | **Budget** | Go — $8/mo | — | AI Plus — $8/mo |
 | **Standard** | Plus — $20/mo | Pro — $20/mo | AI Pro — $20/mo |
 | **Power** | Pro — $200/mo | Max 5x — $100/mo | AI Ultra — $250/mo |
-| **OpenClaw + API keys** | **$5–15/mo typical across all providers** |||
+| **OpenClaw** (OAuth or API) | **OAuth: $0 extra (uses your sub) · API: $5–15/mo typical** |||
 
 💡 **Best value path:** Use free tiers to learn → pick ONE $20 sub → graduate to OpenClaw + API for max flexibility.
 
@@ -48,7 +48,25 @@ Before trusting AI on **facts**:
 
 **AI is great at thinking, mediocre at remembering.**
 
-## API Key Setup (One-Time, ~5 min each)
+## Two Ways to Authenticate: OAuth vs API Key
+
+### OAuth (Use Your Existing Subscription)
+- Available in **official apps only**: OpenClaw, Claude Code, Codex CLI
+- The app gives you a link → you authorize in browser → paste code back
+- Uses your existing Pro/Max plan — **no extra cost**, but tokens count against subscription limits
+- You see token usage only (no dollar cost shown)
+- Credentials stored locally:
+  - OpenClaw: `~/.openclaw/credentials/oauth.json`
+  - Claude Code: `~/.claude/.credentials.json`
+
+### API Key (Pay-as-You-Go)
+- For **any app**, including your own custom programs
+- Go to provider console → create key → add billing/credits
+- You pay per token — typically **pennies per conversation**
+- You see **exact dollar cost**
+- ⚠️ **Custom programs can ONLY use API keys** — OAuth is not available for your own code
+
+### API Key Setup (One-Time, ~5 min each)
 
 | Provider | URL | What to do |
 |----------|-----|-----------|
@@ -59,6 +77,10 @@ Before trusting AI on **facts**:
 **Treat API keys like credit card numbers. Never share them.**
 
 ## OpenClaw Quick Install
+
+During `openclaw setup`, you choose your auth method:
+- **OAuth**: Anthropic (Claude Code credentials) or OpenAI (Codex) — uses your existing subscription
+- **API Key**: Anthropic, OpenAI, Google, xAI, and many others — pay-as-you-go
 
 **macOS:**
 ```bash

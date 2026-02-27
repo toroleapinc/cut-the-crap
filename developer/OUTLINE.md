@@ -17,7 +17,7 @@
 3. Open source models: Llama, Mistral, DeepSeek, Qwen
 4. Self-hosting: Ollama, vLLM
 5. API key setup — live first call (OpenAI + Anthropic)
-6. OAuth vs API key
+6. OAuth vs API key — OAuth uses existing subscription via official apps (OpenClaw, Claude Code), API keys are pay-as-you-go for custom code; OpenClaw accepts both; custom programs can ONLY use API keys
 7. Hands-on: build a simple chat script (Python) — `chat_script.py`
 
 ### Session 2: Prompting, Structured Output & Multimodal
