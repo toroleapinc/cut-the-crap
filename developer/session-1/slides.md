@@ -25,12 +25,12 @@ Now let's learn to BUILD with AI.
 
 | Provider | Key Models | Strengths | Pricing Tier |
 |----------|-----------|-----------|-------------|
-| **OpenAI** | GPT-4o, GPT-4o-mini, o1, o3-mini | Ecosystem, market share, multimodal | $$ |
-| **Anthropic** | Claude 4 Sonnet, Claude 4 Opus, Claude 3.5 Haiku | Safety, long context (200K), coding | $$ |
-| **Google** | Gemini 2.0 Flash, Gemini 2.5 Pro | Massive context (1M+), multimodal, free tier | $-$$ |
-| **Meta** | Llama 3.3 70B, Llama 4 Scout/Maverick | Open source, self-hostable | Free (compute costs) |
-| **Mistral** | Mistral Large, Mistral Small, Codestral | EU-based, efficient, open-weight options | $-$$ |
-| **DeepSeek** | DeepSeek-V3, DeepSeek-R1 | Dirt cheap, strong reasoning | $ |
+| **OpenAI** | GPT-5.2 (Dec 2025), 400K ctx, o3, o4-mini | Ecosystem, MCP support, 187 tok/s | $20/$60 per 1M |
+| **Anthropic** | Claude Opus 4.6 (Feb 2026), Sonnet 4.6, Haiku 4.5 | SWE-bench 80.9%, Claude Code, safety | $5/$25 per 1M |
+| **Google** | Gemini 3 Pro (Nov 2025), 1M ctx | Native multimodal (text+image+audio+video), agentic | $-$$ |
+| **Meta** | Llama 4 Scout/Maverick (open source) | 17B active MoE, self-hostable, commercial OK | Free (compute) |
+| **Mistral** | Mistral Large, Codestral | EU-based, efficient, open-weight options | $-$$ |
+| **DeepSeek** | DeepSeek V4 ($0.14/1M tokens) | 94% cheaper than GPT, strong reasoning | Budget king |
 
 **SAY:**
 > Here's the landscape as of early 2026. Six major players. OpenAI has market share and the biggest ecosystem. Anthropic — that's Claude — excels at safety, long context, and coding tasks. Google's Gemini has insane context windows, over a million tokens. Meta's Llama is the open-source king — you can run it yourself. Mistral is the EU player, efficient models. DeepSeek out of China shocked everyone with strong models at rock-bottom prices.
@@ -46,12 +46,12 @@ Now let's learn to BUILD with AI.
 Model Types:
 
 1. CHAT MODELS (most common)
-   - GPT-4o, Claude 4 Sonnet, Gemini 2.0 Flash
+   - GPT-5.2, Claude Sonnet 4.6, Gemini 3 Pro
    - Input: messages → Output: text
    - What you use 95% of the time
 
 2. REASONING MODELS
-   - o1, o3-mini (OpenAI), Claude 4 Opus (extended thinking)
+   - o3, o4-mini (OpenAI), Claude Opus 4.6 (extended thinking)
    - "Think before answering" — chain-of-thought built in
    - Slower, more expensive, better at hard problems
 
@@ -75,7 +75,7 @@ Model Types:
 **SHOW:**
 ```python
 response = client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[...],
     temperature=0.7,      # 0 = deterministic, 2 = creative chaos
     max_tokens=1024,       # output length cap
@@ -111,7 +111,7 @@ Open Source / Open Weight Models:
 │  - Maverick (17B active, 400B total, 128 experts)│
 │  - Open source, commercial use OK                │
 ├─────────────────────────────────────────────────┤
-│  DeepSeek-V3 / R1                                │
+│  DeepSeek V4 / R1                                │
 │  - V3: 671B MoE, strong general model            │
 │  - R1: reasoning model, open weights             │
 │  - MIT license                                   │
@@ -129,7 +129,7 @@ Open Source / Open Weight Models:
 ```
 
 **SAY:**
-> Open source is a huge deal. Meta's Llama 4 uses mixture-of-experts — only 17 billion parameters are active at once, but the full model is much bigger. DeepSeek-R1 is open weights and gives you reasoning capabilities for free. Mistral and Qwen round out the options. Why does this matter? You can run these yourself, fine-tune them, or use them where you can't send data to external APIs. We'll cover self-hosting next.
+> Open source is a huge deal. Meta's Llama 4 uses mixture-of-experts — only 17 billion parameters are active at once, but the full model is much bigger. DeepSeek R1 is open weights and gives you reasoning capabilities for free. Mistral and Qwen round out the options. Why does this matter? You can run these yourself, fine-tune them, or use them where you can't send data to external APIs. We'll cover self-hosting next.
 
 ---
 
@@ -139,14 +139,14 @@ Open Source / Open Weight Models:
 ```bash
 # Ollama — dead simple local inference
 $ curl -fsSL https://ollama.ai/install.sh | sh
-$ ollama pull llama3.3
-$ ollama run llama3.3
+$ ollama pull llama4
+$ ollama run llama4
 >>> Hello! How can I help?
 
 # Ollama exposes an OpenAI-compatible API!
 $ curl http://localhost:11434/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -d '{"model": "llama3.3", "messages": [{"role": "user", "content": "Hello"}]}'
+  -d '{"model": "llama4", "messages": [{"role": "user", "content": "Hello"}]}'
 
 # vLLM — production-grade serving
 $ pip install vllm
@@ -162,7 +162,7 @@ When to self-host:
 ✅ Low-latency edge deployment
 
 When NOT to self-host:
-❌ You need frontier intelligence (GPT-4o, Claude 4 Opus level)
+❌ You need frontier intelligence (GPT-5.2, Claude Opus 4.6 level)
 ❌ Small team, no GPU budget
 ❌ Rapid prototyping
 ```
@@ -196,7 +196,7 @@ from openai import OpenAI
 client = OpenAI()  # reads OPENAI_API_KEY from env
 
 response = client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[{"role": "user", "content": "Say hello in one sentence."}]
 )
 print(response.choices[0].message.content)
@@ -208,7 +208,7 @@ import anthropic
 client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
 
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250217",
     max_tokens=100,
     messages=[{"role": "user", "content": "Say hello in one sentence."}]
 )
@@ -221,7 +221,7 @@ from google import genai
 client = genai.Client()  # reads GOOGLE_API_KEY from env
 
 response = client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-3-pro",
     contents="Say hello in one sentence."
 )
 print(response.text)
@@ -345,7 +345,7 @@ Each call costs tokens for the ENTIRE conversation.
 ```python
 # OpenAI streaming
 stream = client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[{"role": "user", "content": "Tell me a joke"}],
     stream=True
 )
@@ -356,7 +356,7 @@ for chunk in stream:
 
 # Anthropic streaming
 with anthropic_client.messages.stream(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250217",
     max_tokens=200,
     messages=[{"role": "user", "content": "Tell me a joke"}]
 ) as stream:
@@ -389,7 +389,7 @@ def call_with_retry(messages, max_retries=3):
     for attempt in range(max_retries):
         try:
             return client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-5.2",
                 messages=messages
             )
         except RateLimitError:

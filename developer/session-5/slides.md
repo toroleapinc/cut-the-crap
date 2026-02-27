@@ -100,7 +100,7 @@ messages = [
 # The ReAct loop — it's just a while loop!
 while True:
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-5.2",
         messages=messages,
         tools=tools
     )
@@ -151,7 +151,7 @@ from openai import agents
 agent = agents.Agent(
     name="Research Assistant",
     instructions="You help users research topics thoroughly.",
-    model="gpt-4o",
+    model="gpt-5.2",
     tools=[agents.WebSearchTool()]
 )
 
@@ -189,7 +189,7 @@ messages = [{"role": "user", "content": "Weather in Toronto and NYC?"}]
 # Same ReAct loop, Anthropic style
 while True:
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6-20250217",
         max_tokens=1024,
         tools=tools,
         messages=messages
@@ -265,7 +265,7 @@ def search_web(query: str) -> str:
     return f"Results for: {query}"
 
 # 2. Define the agent node
-llm = ChatOpenAI(model="gpt-4o").bind_tools([search_web])
+llm = ChatOpenAI(model="gpt-5.2").bind_tools([search_web])
 
 def agent(state: State):
     return {"messages": [llm.invoke(state["messages"])]}
@@ -309,7 +309,7 @@ class CityInfo(BaseModel):
     fun_fact: str
 
 agent = Agent(
-    "openai:gpt-4o",  # or "anthropic:claude-sonnet-4-20250514"
+    "openai:gpt-5.2",  # or "anthropic:claude-sonnet-4-6-20250217"
     result_type=CityInfo,  # Structured output built-in
     system_prompt="You provide city information."
 )
@@ -332,14 +332,14 @@ researcher = Agent(
     role="Senior Researcher",
     goal="Find comprehensive info on the topic",
     backstory="You're a thorough researcher who checks multiple sources.",
-    llm="gpt-4o"
+    llm="gpt-5.2"
 )
 
 writer = Agent(
     role="Technical Writer",
     goal="Write clear, engaging content",
     backstory="You turn complex research into readable articles.",
-    llm="gpt-4o"
+    llm="gpt-5.2"
 )
 
 research_task = Task(

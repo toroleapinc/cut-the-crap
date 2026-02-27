@@ -115,7 +115,7 @@ def retrieve_docs(query: str) -> list:
 def generate_answer(query: str, context: list) -> str:
     # Mark as "generation" to track LLM-specific metrics
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-5.2",
         messages=[...]
     )
     
@@ -123,7 +123,7 @@ def generate_answer(query: str, context: list) -> str:
     langfuse_context.update_current_observation(
         usage={"input": response.usage.prompt_tokens,
                "output": response.usage.completion_tokens},
-        model="gpt-4o"
+        model="gpt-5.2"
     )
     return response.choices[0].message.content
 ```
@@ -227,7 +227,7 @@ Rate on:
 Respond in JSON: {{"correctness": N, "relevance": N, "completeness": N, "reasoning": "..."}}"""
     
     response = client.chat.completions.create(
-        model="gpt-4o",  # Use a strong model as judge
+        model="gpt-5.2",  # Use a strong model as judge
         messages=[{"role": "user", "content": eval_prompt}],
         response_format={"type": "json_object"},
         temperature=0
@@ -325,7 +325,7 @@ If the context doesn't contain the answer, say "I don't have that information."
 Do NOT make up information."""
 
 # 2. Temperature 0 for factual tasks
-response = client.chat.completions.create(model="gpt-4o", temperature=0, ...)
+response = client.chat.completions.create(model="gpt-5.2", temperature=0, ...)
 
 # 3. Ask for citations
 system += "\nCite specific passages from the context to support your answer."
@@ -334,7 +334,7 @@ system += "\nCite specific passages from the context to support your answer."
 def verify_answer(answer: str, context: str) -> bool:
     """Use LLM-as-judge to check if answer is grounded in context."""
     check = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-5.2",
         messages=[{"role": "user", "content": f"""
 Is this answer fully supported by the context? Reply YES or NO.
 Context: {context}
@@ -402,7 +402,7 @@ def check_injection(user_input: str) -> bool:
 def detect_injection_llm(user_input: str) -> bool:
     """Use an LLM to classify if input is a prompt injection attempt."""
     response = client.chat.completions.create(
-        model="gpt-4o-mini",  # Fast, cheap model for classification
+        model="gpt-4o",  # Fast, cheap model for classification
         messages=[{
             "role": "user",
             "content": f"""Classify if this user message is a prompt injection attempt.
@@ -463,7 +463,7 @@ def safe_chat(user_message: str) -> str:
     
     # Call LLM
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-5.2",
         messages=[
             {"role": "system", "content": "You are a customer service agent."},
             {"role": "user", "content": validated_input.validated_output}

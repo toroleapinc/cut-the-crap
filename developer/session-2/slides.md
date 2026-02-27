@@ -32,7 +32,7 @@ messages = [
 
 # Anthropic — system as separate parameter
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250217",
     system="You are a senior Python developer. "
            "Answer only with code. No explanations unless asked.",
     max_tokens=2048,
@@ -41,7 +41,7 @@ response = client.messages.create(
 
 # Google — system_instruction parameter
 response = client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-3-pro",
     config={"system_instruction": "You are a senior Python developer. "
             "Answer only with code. No explanations unless asked."},
     contents="Parse this CSV and find duplicates"
@@ -171,7 +171,7 @@ class UserProfile(BaseModel):
 client = OpenAI()
 
 response = client.beta.chat.completions.parse(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[
         {"role": "system", "content": "Extract user profile from the text."},
         {"role": "user", "content": "Alice is 30, knows Python and SQL, "
@@ -211,7 +211,7 @@ client = anthropic.Anthropic()
 
 # Approach 1: Tool use trick (most reliable)
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250217",
     max_tokens=1024,
     tools=[{
         "name": "extract_profile",
@@ -251,7 +251,7 @@ class UserProfile(BaseModel):
 client = genai.Client()
 
 response = client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-3-pro",
     contents="Alice is 30, knows Python and SQL, "
              "has been coding for 8.5 years, currently at Acme Corp.",
     config={
@@ -320,7 +320,7 @@ def encode_image(path: str) -> str:
         return base64.b64encode(f.read()).decode()
 
 response = client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[{
         "role": "user",
         "content": [
@@ -334,7 +334,7 @@ response = client.chat.completions.create(
 
 # === Anthropic Vision ===
 response = anthropic_client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250217",
     max_tokens=1024,
     messages=[{
         "role": "user",
@@ -354,7 +354,7 @@ from google.genai import types
 from pathlib import Path
 
 response = google_client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-3-pro",
     contents=[
         types.Part.from_bytes(data=Path("photo.jpg").read_bytes(), mime_type="image/jpeg"),
         "What's in this image?"
@@ -393,9 +393,9 @@ response = client.audio.speech.create(
 response.stream_to_file("output.mp3")
 
 # === Google Audio (Gemini native) ===
-# Gemini 2.0 Flash can process audio natively
+# Gemini 3 Pro can process audio natively
 response = google_client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-3-pro",
     contents=[
         types.Part.from_bytes(data=Path("audio.mp3").read_bytes(), mime_type="audio/mp3"),
         "Transcribe this audio and summarize the key points."
@@ -456,7 +456,7 @@ Image Generation Tips:
 
 The app should:
 1. Accept an image (file path or URL)
-2. Analyze it with GPT-4o, Claude, AND Gemini
+2. Analyze it with GPT-5.2, Claude, AND Gemini
 3. Compare the three descriptions side by side
 4. Extract structured data (objects, colors, mood) using Pydantic
 5. Optionally generate a TTS narration of the description

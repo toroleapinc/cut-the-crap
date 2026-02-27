@@ -86,7 +86,7 @@ tools = [{
 
 # Step 2: Send message with tools
 response = client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[{"role": "user", "content": "What's the weather in Toronto?"}],
     tools=tools,
 )
@@ -102,7 +102,7 @@ if msg.tool_calls:
     result = get_weather(**args)  # YOUR function
     
     followup = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-5.2",
         messages=[
             {"role": "user", "content": "What's the weather in Toronto?"},
             msg,  # include the assistant's tool_call message
@@ -143,7 +143,7 @@ tools = [{
 
 # Send message
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250217",
     max_tokens=1024,
     tools=tools,
     messages=[{"role": "user", "content": "What's the weather in Toronto?"}]
@@ -158,7 +158,7 @@ if response.stop_reason == "tool_use":
     
     # Send result back
     followup = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6-20250217",
         max_tokens=1024,
         tools=tools,
         messages=[
@@ -211,7 +211,7 @@ weather_tool = types.Tool(
 )
 
 response = client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-3-pro",
     contents="What's the weather in Toronto?",
     config=types.GenerateContentConfig(tools=[weather_tool]),
 )
@@ -226,7 +226,7 @@ if part.function_call:
     
     # Send result back
     followup = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-3-pro",
         contents=[
             types.Content(role="user", parts=[types.Part(text="What's the weather in Toronto?")]),
             response.candidates[0].content,  # assistant's function call

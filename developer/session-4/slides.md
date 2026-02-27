@@ -12,7 +12,7 @@ Before MCP:
 │  Claude   │◄────────────────►│  GitHub   │
 └──────────┘                   └──────────┘
 ┌──────────┐    custom code    ┌──────────┐
-│  GPT-4o   │◄────────────────►│  GitHub   │
+│  GPT-5.2   │◄────────────────►│  GitHub   │
 └──────────┘                   └──────────┘
 ┌──────────┐    custom code    ┌──────────┐
 │  Gemini   │◄────────────────►│  GitHub   │
@@ -25,7 +25,7 @@ After MCP:
 │  Claude   │◄──┐              │  GitHub   │◄── MCP Server
 └──────────┘   │    ┌──────┐  └──────────┘
 ┌──────────┐   ├───►│ MCP  │  ┌──────────┐
-│  GPT-4o   │◄──┤   │Protocol│►│  Slack    │◄── MCP Server
+│  GPT-5.2   │◄──┤   │Protocol│►│  Slack    │◄── MCP Server
 └──────────┘   │    └──────┘  └──────────┘
 ┌──────────┐   │              ┌──────────┐
 │  Gemini   │◄──┘              │  Database │◄── MCP Server

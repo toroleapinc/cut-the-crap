@@ -21,7 +21,7 @@
 
 ## Slide 2: Cost Optimization — It Adds Up Fast
 
-**Real costs at scale (GPT-4o):**
+**Real costs at scale (GPT-5.2):**
 | Usage | Input Tokens | Output Tokens | Monthly Cost |
 |-------|-------------|---------------|-------------|
 | 1K requests/day | ~5M/day | ~1M/day | ~$1,050 |
@@ -29,12 +29,12 @@
 | 100K requests/day | ~500M/day | ~100M/day | ~$105,000 |
 
 **Three levers:**
-1. **Use cheaper models** where possible (GPT-4o-mini is 30x cheaper)
+1. **Use cheaper models** where possible (GPT-5.2-mini is 30x cheaper)
 2. **Cache** repeated/similar requests
 3. **Batch** non-urgent requests (50% discount)
 
 > **SPEAKER NOTES:**
-> "AI costs can explode. A single GPT-4o call costs fractions of a cent, but at 100K requests per day you're looking at $100K/month. The good news: most of that is waste. You probably don't need GPT-4o for every request. Caching saves repeat queries. And batching gets you a 50% discount for anything that doesn't need real-time response."
+> "AI costs can explode. A single GPT-5.2 call costs fractions of a cent, but at 100K requests per day you're looking at $100K/month. The good news: most of that is waste. You probably don't need GPT-5.2 for every request. Caching saves repeat queries. And batching gets you a 50% discount for anything that doesn't need real-time response."
 
 ---
 
@@ -47,7 +47,7 @@ def route_request(query: str, complexity: str = "auto") -> str:
     if complexity == "auto":
         # Use a cheap model to classify complexity
         classification = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[{"role": "user", "content": 
                 f"Rate this query's complexity: LOW, MEDIUM, or HIGH.\n{query}"}],
             max_tokens=10, temperature=0
@@ -55,12 +55,12 @@ def route_request(query: str, complexity: str = "auto") -> str:
         complexity = classification.strip()
     
     model_map = {
-        "LOW": "gpt-4o-mini",       # $0.15/$0.60 per 1M tokens
-        "MEDIUM": "gpt-4o",          # $2.50/$10 per 1M tokens  
+        "LOW": "gpt-4o",       # $0.15/$0.60 per 1M tokens
+        "MEDIUM": "gpt-5.2",          # $2.50/$10 per 1M tokens  
         "HIGH": "o1",                # For complex reasoning
     }
     
-    model = model_map.get(complexity, "gpt-4o")
+    model = model_map.get(complexity, "gpt-5.2")
     
     response = client.chat.completions.create(
         model=model,
@@ -72,7 +72,7 @@ def route_request(query: str, complexity: str = "auto") -> str:
 **Real-world split:** ~70% LOW, ~25% MEDIUM, ~5% HIGH → **60-80% cost savings**
 
 > **SPEAKER NOTES:**
-> "Model routing is the single biggest cost optimization. Most requests don't need your most expensive model. 'What's the weather?' doesn't need GPT-4o. 'Analyze this legal contract for liability issues' does. Use a cheap classifier to route — the cost of classification is negligible compared to the savings. Companies that implement routing typically save 60-80% on their AI costs."
+> "Model routing is the single biggest cost optimization. Most requests don't need your most expensive model. 'What's the weather?' doesn't need GPT-5.2. 'Analyze this legal contract for liability issues' does. Use a cheap classifier to route — the cost of classification is negligible compared to the savings. Companies that implement routing typically save 60-80% on their AI costs."
 
 ---
 
@@ -84,7 +84,7 @@ import hashlib, json, redis
 
 r = redis.Redis()
 
-def cached_llm_call(messages: list, model: str = "gpt-4o") -> str:
+def cached_llm_call(messages: list, model: str = "gpt-5.2") -> str:
     cache_key = hashlib.md5(json.dumps(messages).encode()).hexdigest()
     
     cached = r.get(cache_key)
@@ -99,7 +99,7 @@ def cached_llm_call(messages: list, model: str = "gpt-4o") -> str:
 
 # 2. Anthropic Prompt Caching (built-in, no extra infra)
 response = anthropic_client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250217",
     max_tokens=1024,
     system=[{
         "type": "text",
@@ -138,7 +138,7 @@ requests = [
         "method": "POST",
         "url": "/v1/chat/completions",
         "body": {
-            "model": "gpt-4o",
+            "model": "gpt-5.2",
             "messages": [{"role": "user", "content": f"Summarize article {i}"}]
         }
     }
@@ -176,16 +176,16 @@ print(f"Status: {status.status}")  # validating → in_progress → completed
 from litellm import completion
 
 # Same interface, any provider
-response = completion(model="gpt-4o", messages=[...])          # OpenAI
-response = completion(model="claude-sonnet-4-20250514", messages=[...])   # Anthropic
-response = completion(model="gemini/gemini-2.0-flash", messages=[...])  # Google
+response = completion(model="gpt-5.2", messages=[...])          # OpenAI
+response = completion(model="claude-sonnet-4-6-20250217", messages=[...])   # Anthropic
+response = completion(model="gemini/gemini-3-pro", messages=[...])  # Google
 response = completion(model="ollama/llama3", messages=[...])   # Local
 
 # Fallback chain
 response = completion(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[...],
-    fallbacks=["claude-sonnet-4-20250514", "gemini-2.0-flash"],  # Auto-fallback
+    fallbacks=["claude-sonnet-4-6-20250217", "gemini-3-pro"],  # Auto-fallback
     num_retries=2
 )
 ```
@@ -213,7 +213,7 @@ client = OpenAI(timeout=30.0, max_retries=3)
 # 1. Streaming — don't make users stare at a spinner
 def stream_response(messages: list):
     stream = client.chat.completions.create(
-        model="gpt-4o", messages=messages, stream=True
+        model="gpt-5.2", messages=messages, stream=True
     )
     full_response = ""
     for chunk in stream:
@@ -228,7 +228,7 @@ def resilient_call(messages: list, max_retries: int = 3) -> str:
     for attempt in range(max_retries):
         try:
             response = client.chat.completions.create(
-                model="gpt-4o", messages=messages
+                model="gpt-5.2", messages=messages
             )
             return response.choices[0].message.content
         except RateLimitError:
@@ -241,7 +241,7 @@ def resilient_call(messages: list, max_retries: int = 3) -> str:
 
 # 3. Timeouts — don't let requests hang forever
 response = client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=messages,
     timeout=15.0  # 15-second timeout
 )
@@ -264,7 +264,7 @@ def safe_llm_call(messages: list) -> dict:
     """Production-grade LLM call with proper error handling."""
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-5.2",
             messages=messages,
             timeout=30.0
         )
@@ -335,7 +335,7 @@ API Direct      ████░░░░░░░░                     ██�
 ```
 
 > **SPEAKER NOTES:**
-> "If you're at a company, your security team will have questions. Key facts: API usage is NOT used for training by any major provider — that's the consumer products. All major providers have SOC 2. For maximum privacy, self-host open source models. The middle ground: Azure OpenAI or AWS Bedrock gives you GPT-4o or Claude in your own cloud tenant with enterprise agreements. Know these answers before your security review."
+> "If you're at a company, your security team will have questions. Key facts: API usage is NOT used for training by any major provider — that's the consumer products. All major providers have SOC 2. For maximum privacy, self-host open source models. The middle ground: Azure OpenAI or AWS Bedrock gives you GPT-5.2 or Claude in your own cloud tenant with enterprise agreements. Know these answers before your security review."
 
 ---
 
@@ -535,7 +535,7 @@ openclaw skill publish ./my-skill
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  MODELS          APIs              FRAMEWORKS                │
-│  ├── GPT-4o      ├── OpenAI        ├── LangGraph             │
+│  ├── GPT-5.2      ├── OpenAI        ├── LangGraph             │
 │  ├── Claude      ├── Anthropic     ├── CrewAI                │
 │  ├── Gemini      ├── Google        ├── Pydantic AI           │
 │  ├── Llama       └── Ollama        └── OpenAI Agents SDK     │

@@ -199,7 +199,7 @@ context = "\n".join(results["documents"][0])
 
 # 3. GENERATE: LLM answers using retrieved context
 response = client.chat.completions.create(
-    model="gpt-4o",
+    model="gpt-5.2",
     messages=[
         {"role": "system", "content": f"Answer based on this context:\n{context}"},
         {"role": "user", "content": question}
@@ -304,19 +304,19 @@ file = client.files.create(file=open("training_data.jsonl", "rb"), purpose="fine
 # 3. Start fine-tuning
 job = client.fine_tuning.jobs.create(
     training_file=file.id,
-    model="gpt-4o-mini-2024-07-18"
+    model="gpt-4o-2024-07-18"
 )
 
 # 4. Use your fine-tuned model
 response = client.chat.completions.create(
-    model="ft:gpt-4o-mini:my-org::abc123",  # Your fine-tuned model ID
+    model="ft:gpt-4o:my-org::abc123",  # Your fine-tuned model ID
     messages=[{"role": "user", "content": "..."}]
 )
 ```
 
 **Fine-tuning costs:**
-- GPT-4o-mini: ~$3/1M training tokens
-- GPT-4o: ~$25/1M training tokens
+- GPT-5.2-mini: ~$3/1M training tokens
+- GPT-5.2: ~$25/1M training tokens
 - Need 50-100+ examples minimum
 
 > **SPEAKER NOTES:**
@@ -329,7 +329,7 @@ response = client.chat.completions.create(
 ```python
 import tiktoken
 
-def count_tokens(text: str, model: str = "gpt-4o") -> int:
+def count_tokens(text: str, model: str = "gpt-5.2") -> int:
     """Count tokens in text."""
     enc = tiktoken.encoding_for_model(model)
     return len(enc.encode(text))
@@ -352,7 +352,7 @@ def summarize_and_compress(messages: list, client) -> list:
     
     old = messages[1:-4]  # Keep system prompt and last 4
     summary = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[{
             "role": "user",
             "content": f"Summarize this conversation:\n{old}"
