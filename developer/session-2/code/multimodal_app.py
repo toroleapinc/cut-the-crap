@@ -2,6 +2,15 @@
 Cut the Crap — Session 2: Multimodal Analysis App
 Sends an image to OpenAI, Anthropic, and Google, compares results,
 extracts structured data, and optionally generates TTS narration.
+
+Updated: February 2026
+Models: GPT-4.1, Claude Sonnet 4.6, Gemini 2.5 Flash
+
+Requirements:
+    pip install openai anthropic google-genai pydantic
+    export OPENAI_API_KEY=your-key
+    export ANTHROPIC_API_KEY=your-key
+    export GOOGLE_API_KEY=your-key
 """
 
 import base64
@@ -44,14 +53,18 @@ def encode_image(path: str) -> str:
 # --- Provider Analyzers ---
 
 def analyze_openai(image_path: str) -> tuple[str, ImageAnalysis | None]:
-    """Analyze image with GPT-4o. Returns (description, structured_data)."""
+    """Analyze image with GPT-4.1. Returns (description, structured_data).
+    
+    GPT-4.1 supports vision natively — just pass image_url in content array.
+    Structured Outputs use response_format with a Pydantic model.
+    """
     from openai import OpenAI
     client = OpenAI()
     b64 = encode_image(image_path)
 
     # Step 1: Get text description
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[{
             "role": "user",
             "content": [
@@ -64,9 +77,9 @@ def analyze_openai(image_path: str) -> tuple[str, ImageAnalysis | None]:
     )
     description = response.choices[0].message.content
 
-    # Step 2: Get structured output
+    # Step 2: Get structured output (native structured outputs — GA since GPT-4o)
     structured_response = client.beta.chat.completions.parse(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[{
             "role": "user",
             "content": [
@@ -84,7 +97,11 @@ def analyze_openai(image_path: str) -> tuple[str, ImageAnalysis | None]:
 
 
 def analyze_anthropic(image_path: str) -> tuple[str, ImageAnalysis | None]:
-    """Analyze image with Claude."""
+    """Analyze image with Claude Sonnet 4.6.
+    
+    Anthropic vision: pass base64 image in content blocks.
+    Structured output: use tool_choice to force a tool call with your schema.
+    """
     import anthropic
     client = anthropic.Anthropic()
     b64 = encode_image(image_path)
@@ -97,7 +114,7 @@ def analyze_anthropic(image_path: str) -> tuple[str, ImageAnalysis | None]:
 
     # Step 1: Text description
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6-20250217",
         max_tokens=1024,
         messages=[{
             "role": "user",
@@ -111,9 +128,9 @@ def analyze_anthropic(image_path: str) -> tuple[str, ImageAnalysis | None]:
     )
     description = response.content[0].text
 
-    # Step 2: Structured output via tool use
+    # Step 2: Structured output via tool use (Anthropic's pattern for structured output)
     structured_response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6-20250217",
         max_tokens=1024,
         tools=[{
             "name": "analyze_image",
@@ -138,7 +155,11 @@ def analyze_anthropic(image_path: str) -> tuple[str, ImageAnalysis | None]:
 
 
 def analyze_google(image_path: str) -> tuple[str, ImageAnalysis | None]:
-    """Analyze image with Gemini."""
+    """Analyze image with Gemini 2.5 Flash.
+    
+    Google GenAI SDK: pass image bytes via types.Part.from_bytes().
+    Structured output: use response_mime_type + response_schema.
+    """
     from google import genai
     from google.genai import types
     client = genai.Client()
@@ -151,7 +172,7 @@ def analyze_google(image_path: str) -> tuple[str, ImageAnalysis | None]:
 
     # Step 1: Text description
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         contents=[
             types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
             "Describe this image in detail in one paragraph.",
@@ -161,7 +182,7 @@ def analyze_google(image_path: str) -> tuple[str, ImageAnalysis | None]:
 
     # Step 2: Structured output
     structured_response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         contents=[
             types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
             "Analyze this image and extract structured data.",
@@ -179,7 +200,13 @@ def analyze_google(image_path: str) -> tuple[str, ImageAnalysis | None]:
 # --- TTS Narration ---
 
 def generate_narration(text: str, output_path: str = "narration.mp3"):
-    """Generate TTS narration of the image description using OpenAI."""
+    """Generate TTS narration of the image description using OpenAI.
+    
+    OpenAI TTS models (Feb 2026):
+      - tts-1      : Standard quality, low latency
+      - tts-1-hd   : Higher quality
+      - gpt-audio-1.5 : Latest audio model (Realtime API)
+    """
     from openai import OpenAI
     client = OpenAI()
     response = client.audio.speech.create(
@@ -189,6 +216,30 @@ def generate_narration(text: str, output_path: str = "narration.mp3"):
     )
     response.stream_to_file(output_path)
     print(f"🔊 Narration saved to {output_path}")
+
+
+# --- Image Generation ---
+
+def generate_image(prompt: str, output_path: str = "generated.png"):
+    """Generate an image from a text prompt using OpenAI GPT Image 1.
+    
+    Models (Feb 2026):
+      - gpt-image-1   : Standard image generation
+      - gpt-image-1.5 : Latest, highest quality
+    """
+    from openai import OpenAI
+    client = OpenAI()
+    response = client.images.generate(
+        model="gpt-image-1",
+        prompt=prompt,
+        size="1024x1024",
+        quality="high",
+        n=1,
+    )
+    # Save image
+    import urllib.request
+    urllib.request.urlretrieve(response.data[0].url, output_path)
+    print(f"🎨 Image saved to {output_path}")
 
 
 # --- Main ---
@@ -209,9 +260,16 @@ def print_analysis(provider: str, description: str, structured: ImageAnalysis | 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python multimodal_app.py <image_path> [--tts]")
+        print("Usage: python multimodal_app.py <image_path> [--tts] [--generate <prompt>]")
         print("Example: python multimodal_app.py photo.jpg --tts")
+        print("Example: python multimodal_app.py --generate 'a cat on the moon'")
         sys.exit(1)
+
+    # Handle image generation mode
+    if sys.argv[1] == "--generate":
+        prompt = " ".join(sys.argv[2:])
+        generate_image(prompt)
+        return
 
     image_path = sys.argv[1]
     do_tts = "--tts" in sys.argv
@@ -226,9 +284,9 @@ def main():
     results = {}
 
     # Analyze with each provider (try each, don't fail on one)
-    for name, fn in [("OpenAI (GPT-4o)", analyze_openai),
-                     ("Anthropic (Claude)", analyze_anthropic),
-                     ("Google (Gemini)", analyze_google)]:
+    for name, fn in [("OpenAI (GPT-4.1)", analyze_openai),
+                     ("Anthropic (Claude Sonnet 4.6)", analyze_anthropic),
+                     ("Google (Gemini 2.5 Flash)", analyze_google)]:
         try:
             desc, structured = fn(image_path)
             results[name] = (desc, structured)

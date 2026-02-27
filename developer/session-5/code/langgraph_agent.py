@@ -2,6 +2,9 @@
 Session 5 Hands-On: Multi-Step Research Agent with LangGraph
 Cut the Crap — AI Engineer Edition
 
+Updated: February 2026
+Uses: LangGraph (latest), GPT-4.1
+
 This agent:
 1. Takes a research topic
 2. Searches for information
@@ -41,12 +44,14 @@ def search_web(query: str) -> str:
         "ai regulations": (
             "The EU AI Act came into force in August 2024. It classifies AI systems by risk level. "
             "High-risk systems (hiring, credit scoring, law enforcement) face strict requirements. "
-            "The US has executive orders on AI safety. China requires algorithm registration."
+            "The US has executive orders on AI safety. China requires algorithm registration. "
+            "As of 2026, enforcement of the EU AI Act is ramping up with fines for non-compliance."
         ),
         "ai agents": (
             "AI agents are LLMs that can use tools and make decisions in a loop. "
-            "Popular frameworks include LangGraph, CrewAI, and OpenAI's Agents SDK. "
-            "Key challenges: reliability, cost control, and safety guardrails."
+            "Popular frameworks include LangGraph, CrewAI, OpenAI Agents SDK, and Anthropic's tool use. "
+            "Key challenges: reliability, cost control, and safety guardrails. "
+            "In 2025-2026, agentic coding (Codex, Claude Code) became mainstream."
         ),
         "default": (
             f"Search results for '{query}': Multiple sources discuss this topic. "
@@ -69,7 +74,8 @@ def write_report(title: str, content: str) -> str:
 
 
 # --- LLM Setup ---
-llm = ChatOpenAI(model="gpt-4o", temperature=0)
+# GPT-4.1 is the best non-reasoning model as of Feb 2026
+llm = ChatOpenAI(model="gpt-4.1", temperature=0)
 llm_with_tools = llm.bind_tools([search_web, write_report])
 
 

@@ -1,101 +1,96 @@
-# Cut the Crap — AI Cheat Sheet
+# Cut the Crap — AI Cheat Sheet (Feb 2026)
 
 ## The Big Three AIs
 
-| AI | Made By | Best At | Website |
+| AI | Made By | Best At | Sign Up |
 |----|---------|---------|---------|
-| **ChatGPT** | OpenAI | Image generation, all-rounder, plugins | chat.openai.com |
-| **Claude** | Anthropic | Writing, analysis, long documents, careful answers | claude.ai |
-| **Gemini** | Google | Current info, Google integration, research | gemini.google.com |
+| **ChatGPT** | OpenAI | Image gen, all-rounder, plugins, coding (GPT-5.3-Codex) | [chatgpt.com](https://chatgpt.com) |
+| **Claude** | Anthropic | Writing, analysis, long docs (1M tokens), careful answers | [claude.ai](https://claude.ai) |
+| **Gemini** | Google | Google integration, Deep Research, generous free tier | [gemini.google.com](https://gemini.google.com) |
 
 ## Models: Pick the Right Brain
 
 | Need | OpenAI | Anthropic | Google |
 |------|--------|-----------|--------|
-| Quick & cheap | GPT-4o-mini | Claude Haiku | Gemini Flash |
-| Everyday work | GPT-4o | Claude Sonnet | Gemini Pro |
-| Maximum power | o3 | Claude Opus | Gemini Ultra |
+| Quick & cheap | GPT-5.2 mini | Haiku 3.5 | Gemini 3 Flash |
+| Everyday work | GPT-5.2 | **Sonnet 4.6** ⭐ | Gemini 3 Pro |
+| Maximum power | GPT-5.3-Codex | **Opus 4.6** | Gemini 3 Pro (Thinking) |
 
-**Rule of thumb:** Use the cheap model for simple questions, balanced for real work, max power only when you need deep analysis.
+⭐ **Sonnet 4.6** is now the default for free Claude users — near-Opus quality at a fraction of the cost.
+
+**Rule of thumb:** Start with the mid-tier model. Only go up for deep analysis or complex coding.
 
 ## What Things Actually Cost
 
-| How you use AI | Monthly cost |
-|----------------|-------------|
-| Free tiers (limited) | $0 |
-| One subscription (ChatGPT/Claude/Gemini) | $20/mo |
-| **OpenClaw + API keys (all models)** | **$5-15/mo typical** |
+| Tier | ChatGPT | Claude | Gemini |
+|------|---------|--------|--------|
+| **Free** | GPT-5.2 (limited, has ads) | Sonnet 4.6 (limited) | 3 Flash + limited 3 Pro |
+| **Budget** | Go — $8/mo | — | AI Plus — $8/mo |
+| **Standard** | Plus — $20/mo | Pro — $20/mo | AI Pro — $20/mo |
+| **Power** | Pro — $200/mo | Max 5x — $100/mo | AI Ultra — $250/mo |
+| **OpenClaw + API keys** | **$5–15/mo typical across all providers** |||
 
-## The Privacy Rules
+💡 **Best value path:** Use free tiers to learn → pick ONE $20 sub → graduate to OpenClaw + API for max flexibility.
 
-| ✅ Safe | ⚠️ Think Twice | ❌ Never |
-|---------|---------------|---------|
-| Public info | Client details | Passwords |
-| Your own writing | Business strategies | Credit card / SIN |
-| General questions | Financial info | Medical records with names |
-| Anonymized scenarios | Anything under NDA | Others' private data |
+## Top 3 Prompting Tips
 
-**Best practice:** Use API (OpenClaw) for sensitive work — companies don't train on API data.
+1. **Be specific.** Not "write an email" → "Write a 100-word professional email to Sarah apologizing for a 2-week delay. Tone: warm but not groveling."
+2. **Give context + constraints.** State your role, audience, format, word count, and tone.
+3. **Iterate.** First answer not great? Say "Make it more concise" or "Focus more on X." AI is a conversation, not a slot machine.
 
 ## Hallucination Check — 30-Second Rule
 
 Before trusting AI on **facts**:
-1. Google the specific claim
-2. Ask a second AI the same question
-3. Ask the AI: "Are you sure? Can you provide a source?"
-4. For anything important: verify with a real source
+1. 🔍 Google the specific claim
+2. 🤖 Ask a second AI the same question
+3. ❓ Ask: "Are you sure? Can you provide a source?"
+4. 📚 For anything important: verify with a real source
 
 **AI is great at thinking, mediocre at remembering.**
 
-## API Key Setup (One-Time)
+## API Key Setup (One-Time, ~5 min each)
 
 | Provider | URL | What to do |
 |----------|-----|-----------|
-| OpenAI | platform.openai.com | API Keys → Create → Add $10 billing |
-| Anthropic | console.anthropic.com | API Keys → Create → Add $10 billing |
-| Google | aistudio.google.com | Get API Key → Create (free tier generous) |
+| OpenAI | [platform.openai.com](https://platform.openai.com) | API Keys → Create → Add $10 billing |
+| Anthropic | [console.anthropic.com](https://console.anthropic.com) | API Keys → Create → Add $10 billing |
+| Google | [aistudio.google.com](https://aistudio.google.com) | Get API Key → Create (free tier very generous) |
 
-**Treat API keys like credit card numbers. Don't share them.**
+**Treat API keys like credit card numbers. Never share them.**
 
 ## OpenClaw Quick Install
 
 **macOS:**
 ```bash
 brew install node
-npm install -g @anthropic/openclaw
+npm i -g openclaw
 openclaw setup
 ```
 
-**Windows (in PowerShell as Admin first):**
+**Windows (PowerShell as Admin first):**
 ```powershell
 wsl --install
 ```
-Then restart, open Ubuntu, and run:
+Restart, open Ubuntu, then:
 ```bash
 sudo apt update && sudo apt upgrade -y
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt install -y nodejs
-npm install -g @anthropic/openclaw
+npm i -g openclaw
 openclaw setup
 ```
 
-## Prompt Tips
+## What to Try First
 
-| Instead of... | Try... |
-|--------------|--------|
-| "Write me an email" | "Write a professional 100-word email to a client named Sarah apologizing for a 2-week delay, tone: warm but not groveling" |
-| "Help me with my resume" | "Review my resume for a senior marketing role. Tell me what's weak, what's missing, and rewrite the summary section" |
-| "Explain AI" | "Explain how AI chatbots work to a 70-year-old who uses email but not much else. Use a cooking analogy" |
-
-**Be specific. Give context. State the format you want. Set constraints (word count, tone, audience).**
+1. **Right now (free):** Go to [claude.ai](https://claude.ai) → upload a document → ask it to summarize and find issues
+2. **This week:** Try the same task on all 3 AIs — you'll quickly find your favorite
+3. **When ready:** Set up OpenClaw → use any model from one place → pay only for what you use
 
 ## Keep Learning
 
-- **The Verge** — AI section (thevrge.com/ai)
-- **Simon Willison's blog** — simonwillison.net
+- **Simon Willison's blog** — [simonwillison.net](https://simonwillison.net) (best AI commentary)
+- **The Verge AI** — [theverge.com/ai](https://theverge.com/ai)
 - **Just use it.** 10 minutes a day → fluent in a month
 
 ---
-
-*Cut the Crap — Everything You Need to Know About AI*
-*Handout v1.0*
+*Cut the Crap — Everything You Need to Know About AI • Handout v2.0 • February 2026*

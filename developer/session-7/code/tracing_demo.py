@@ -2,14 +2,17 @@
 Session 7 Hands-On: Tracing + Evals
 Cut the Crap — AI Engineer Edition
 
+Updated: February 2026
+Models: GPT-4.1, GPT-4.1-mini
+
 Adds observability and evaluation to a RAG pipeline:
-- Langfuse tracing on every step
+- Langfuse tracing on every step (decorator-based, v2 SDK)
 - Cost & latency tracking
 - LLM-as-judge eval suite
 - Basic prompt injection detection
 
 Requirements:
-    pip install langfuse openai chromadb
+    pip install langfuse openai
     export OPENAI_API_KEY=your-key
     export LANGFUSE_SECRET_KEY=your-key    # Get from langfuse.com or self-host
     export LANGFUSE_PUBLIC_KEY=your-key
@@ -53,9 +56,12 @@ def detect_injection_pattern(text: str) -> bool:
 
 @observe(name="injection_detection_llm")
 def detect_injection_llm(text: str) -> bool:
-    """LLM-based injection detection for sophisticated attacks."""
+    """LLM-based injection detection for sophisticated attacks.
+    
+    Uses GPT-4.1-mini for cost-effective classification.
+    """
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4.1-mini",
         messages=[
             {
                 "role": "user",
@@ -142,11 +148,11 @@ def retrieve(query: str, n_results: int = 2) -> list:
 
 @observe(as_type="generation", name="generate_answer")
 def generate_answer(query: str, context: list) -> str:
-    """Generate answer from retrieved context."""
+    """Generate answer from retrieved context using GPT-4.1."""
     context_text = "\n\n".join(f"[{doc['id']}] {doc['text']}" for doc in context)
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[
             {
                 "role": "system",
@@ -215,7 +221,7 @@ def rag_pipeline(query: str) -> dict:
 
 @observe(name="llm_judge")
 def llm_judge(question: str, answer: str, reference: Optional[str] = None) -> dict:
-    """Evaluate an answer using LLM-as-judge."""
+    """Evaluate an answer using LLM-as-judge with GPT-4.1."""
     prompt = f"""Rate this answer on a scale of 1-5 for each criterion.
 
 Question: {question}
@@ -231,7 +237,7 @@ Criteria:
 Respond in JSON: {{"correctness": N, "relevance": N, "completeness": N, "grounding": N, "reasoning": "brief explanation"}}"""
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
         temperature=0,

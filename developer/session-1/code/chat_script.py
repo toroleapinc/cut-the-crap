@@ -2,6 +2,15 @@
 Cut the Crap — Session 1: Multi-Provider Chat Script
 Supports OpenAI, Anthropic, and Google Gemini.
 Switch providers mid-conversation with /openai, /anthropic, /google.
+
+Updated: February 2026
+Models: GPT-4.1, Claude Sonnet 4.6, Gemini 2.5 Flash
+
+Requirements:
+    pip install openai anthropic google-genai
+    export OPENAI_API_KEY=your-key
+    export ANTHROPIC_API_KEY=your-key
+    export GOOGLE_API_KEY=your-key
 """
 
 import os
@@ -24,8 +33,16 @@ def get_google_client():
 
 # --- Chat Functions ---
 
-def chat_openai(client, messages: list[dict], model: str = "gpt-4o") -> str:
-    """Send messages to OpenAI and return the assistant response."""
+def chat_openai(client, messages: list[dict], model: str = "gpt-4.1") -> str:
+    """Send messages to OpenAI and return the assistant response.
+    
+    Models available (Feb 2026):
+      - gpt-5       : Most capable reasoning model
+      - gpt-5-mini  : Fast reasoning model
+      - gpt-4.1     : Best non-reasoning model (default)
+      - gpt-4.1-mini: Smaller, faster version
+      - gpt-4.1-nano: Fastest, cheapest
+    """
     response = client.chat.completions.create(
         model=model,
         messages=messages,
@@ -34,10 +51,15 @@ def chat_openai(client, messages: list[dict], model: str = "gpt-4o") -> str:
     return response.choices[0].message.content
 
 
-def chat_anthropic(client, messages: list[dict], model: str = "claude-sonnet-4-20250514") -> str:
+def chat_anthropic(client, messages: list[dict], model: str = "claude-sonnet-4-6-20250217") -> str:
     """Send messages to Anthropic and return the assistant response.
     
     Note: Anthropic requires max_tokens. System messages are passed separately.
+    
+    Models available (Feb 2026):
+      - claude-opus-4-6-20250217   : Most capable
+      - claude-sonnet-4-6-20250217 : Best balance (default)
+      - claude-haiku-3-5-20241022  : Fastest, cheapest
     """
     # Separate system messages from the conversation
     system_parts = [m["content"] for m in messages if m["role"] == "system"]
@@ -45,7 +67,7 @@ def chat_anthropic(client, messages: list[dict], model: str = "claude-sonnet-4-2
     
     kwargs = dict(
         model=model,
-        max_tokens=2048,
+        max_tokens=8192,
         messages=conversation,
     )
     if system_parts:
@@ -55,10 +77,14 @@ def chat_anthropic(client, messages: list[dict], model: str = "claude-sonnet-4-2
     return response.content[0].text
 
 
-def chat_google(client, messages: list[dict], model: str = "gemini-2.0-flash") -> str:
+def chat_google(client, messages: list[dict], model: str = "gemini-2.5-flash") -> str:
     """Send messages to Google Gemini and return the response.
     
     Converts OpenAI-style messages to Gemini format.
+    
+    Models available (Feb 2026):
+      - gemini-2.5-pro  : Most capable
+      - gemini-2.5-flash: Fast and efficient (default)
     """
     # Extract system instruction
     system_parts = [m["content"] for m in messages if m["role"] == "system"]
@@ -84,7 +110,7 @@ def chat_google(client, messages: list[dict], model: str = "gemini-2.0-flash") -
 
 # --- Streaming Variants ---
 
-def chat_openai_stream(client, messages: list[dict], model: str = "gpt-4o") -> str:
+def chat_openai_stream(client, messages: list[dict], model: str = "gpt-4.1") -> str:
     """Stream OpenAI response, printing tokens as they arrive."""
     stream = client.chat.completions.create(
         model=model,
@@ -102,14 +128,14 @@ def chat_openai_stream(client, messages: list[dict], model: str = "gpt-4o") -> s
     return "".join(full_response)
 
 
-def chat_anthropic_stream(client, messages: list[dict], model: str = "claude-sonnet-4-20250514") -> str:
+def chat_anthropic_stream(client, messages: list[dict], model: str = "claude-sonnet-4-6-20250217") -> str:
     """Stream Anthropic response."""
     system_parts = [m["content"] for m in messages if m["role"] == "system"]
     conversation = [m for m in messages if m["role"] != "system"]
     
     kwargs = dict(
         model=model,
-        max_tokens=2048,
+        max_tokens=8192,
         messages=conversation,
     )
     if system_parts:
@@ -124,12 +150,39 @@ def chat_anthropic_stream(client, messages: list[dict], model: str = "claude-son
     return "".join(full_response)
 
 
+def chat_google_stream(client, messages: list[dict], model: str = "gemini-2.5-flash") -> str:
+    """Stream Google Gemini response."""
+    system_parts = [m["content"] for m in messages if m["role"] == "system"]
+    conversation = [m for m in messages if m["role"] != "system"]
+    
+    contents = []
+    for msg in conversation:
+        role = "user" if msg["role"] == "user" else "model"
+        contents.append({"role": role, "parts": [{"text": msg["content"]}]})
+    
+    config = {}
+    if system_parts:
+        config["system_instruction"] = "\n".join(system_parts)
+    
+    full_response = []
+    for chunk in client.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=config if config else None,
+    ):
+        if chunk.text:
+            print(chunk.text, end="", flush=True)
+            full_response.append(chunk.text)
+    print()
+    return "".join(full_response)
+
+
 # --- Main Loop ---
 
 PROVIDERS = {
     "openai": {"init": get_openai_client, "chat": chat_openai_stream},
     "anthropic": {"init": get_anthropic_client, "chat": chat_anthropic_stream},
-    "google": {"init": get_google_client, "chat": chat_google},  # no stream for simplicity
+    "google": {"init": get_google_client, "chat": chat_google_stream},
 }
 
 def main():

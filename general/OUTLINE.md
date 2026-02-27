@@ -1,19 +1,19 @@
 # Cut the Crap — Everything You Need to Know About AI
 ## General Audience: Single 4-Hour Session
 
-### Part 1: The Landscape
+### Part 1: The Landscape (Feb 2026)
 1. There's more than ChatGPT — meet Claude & Gemini
 2. Live comparison: same prompt, 3 AIs
-3. The Brain vs The App
+3. The Brain vs The App (models vs interfaces)
 
 ### Part 2: How It Works
-4. Models: fast/cheap vs smart/expensive
-5. Free tiers vs paid — pricing truth
+4. Models: fast/cheap vs smart/expensive (GPT-5.2, Sonnet 4.6, Gemini 3 Pro)
+5. Free tiers vs paid — pricing truth (free now has ads on ChatGPT!)
 6. What's an API key
 7. OAuth vs API key
 
 ### Part 3: What AI Can Do
-8. Image gen, voice, vision (quick demos)
+8. Image gen, voice, vision, Deep Research, agents (quick demos)
 
 ### Part 4: What AI Gets Wrong
 9. Hallucinations — when AI is confidently wrong + how to verify

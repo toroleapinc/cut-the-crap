@@ -2,6 +2,15 @@
 Cut the Crap — Session 3: Tool-Calling Assistant
 A complete assistant with multiple tools, automatic tool loop, and multi-turn.
 Uses OpenAI by default. Switch to Anthropic or Google with --provider flag.
+
+Updated: February 2026
+Models: GPT-4.1, Claude Sonnet 4.6, Gemini 2.5 Flash
+
+Requirements:
+    pip install openai anthropic google-genai
+    export OPENAI_API_KEY=your-key
+    export ANTHROPIC_API_KEY=your-key
+    export GOOGLE_API_KEY=your-key
 """
 
 import json
@@ -15,7 +24,6 @@ from typing import Any
 
 def get_weather(city: str, unit: str = "celsius") -> dict:
     """Simulate getting weather data. In production, call a real API."""
-    # Fake data for demo purposes
     import random
     random.seed(hash(city))
     temp = random.randint(-10, 35) if unit == "celsius" else random.randint(14, 95)
@@ -120,6 +128,11 @@ def execute_tool(name: str, arguments: dict) -> Any:
 # ============================================================
 
 def run_openai(messages: list[dict]):
+    """OpenAI tool loop using GPT-4.1.
+    
+    Pattern: pass tools array, check for tool_calls in response,
+    execute tools, append tool results, loop until no more tool_calls.
+    """
     from openai import OpenAI
     client = OpenAI()
 
@@ -131,7 +144,7 @@ def run_openai(messages: list[dict]):
 
     while True:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4.1",
             messages=messages,
             tools=tools,
         )
@@ -159,6 +172,11 @@ def run_openai(messages: list[dict]):
 # ============================================================
 
 def run_anthropic(messages: list[dict]):
+    """Anthropic tool loop using Claude Sonnet 4.6.
+    
+    Pattern: pass tools array, check stop_reason == "tool_use",
+    extract tool_use blocks, execute, return tool_result blocks.
+    """
     import anthropic
     client = anthropic.Anthropic()
 
@@ -175,7 +193,7 @@ def run_anthropic(messages: list[dict]):
             conversation.append(m)
 
     while True:
-        kwargs = dict(model="claude-sonnet-4-20250514", max_tokens=2048,
+        kwargs = dict(model="claude-sonnet-4-6-20250217", max_tokens=8192,
                       tools=tools, messages=conversation)
         if system:
             kwargs["system"] = system
@@ -206,6 +224,11 @@ def run_anthropic(messages: list[dict]):
 # ============================================================
 
 def run_google(messages: list[dict]):
+    """Google tool loop using Gemini 2.5 Flash.
+    
+    Pattern: define FunctionDeclarations in a Tool, check for
+    function_call in response parts, return FunctionResponse.
+    """
     from google import genai
     from google.genai import types
 
@@ -241,7 +264,7 @@ def run_google(messages: list[dict]):
 
     while True:
         response = client.models.generate_content(
-            model="gemini-2.0-flash", contents=contents, config=config)
+            model="gemini-2.5-flash", contents=contents, config=config)
 
         part = response.candidates[0].content.parts[0]
         if not part.function_call:

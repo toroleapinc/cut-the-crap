@@ -2,9 +2,12 @@
 Session 6 Hands-On: RAG Pipeline
 Cut the Crap — AI Engineer Edition
 
+Updated: February 2026
+Models: GPT-4.1, text-embedding-3-small
+
 Build a document Q&A system with:
 - Document loading and chunking
-- Embeddings with OpenAI
+- Embeddings with OpenAI text-embedding-3-small
 - Vector storage with ChromaDB
 - Retrieval + generation with source citations
 
@@ -112,7 +115,12 @@ def chunk_documents(documents: dict, chunk_size: int = 300, overlap: int = 50) -
 
 # --- Step 2: Embed and Store ---
 def embed_text(text: str) -> list[float]:
-    """Get embedding vector for text."""
+    """Get embedding vector for text.
+    
+    OpenAI embedding models (Feb 2026):
+      - text-embedding-3-small : 1536 dims, cheapest ($0.02/1M tokens)
+      - text-embedding-3-large : 3072 dims, best quality
+    """
     response = client.embeddings.create(model="text-embedding-3-small", input=text)
     return response.data[0].embedding
 
@@ -163,7 +171,7 @@ def retrieve(collection: chromadb.Collection, query: str, n_results: int = 3) ->
 
 # --- Step 4: Generate Answer ---
 def generate_answer(query: str, context_chunks: list) -> str:
-    """Generate an answer using retrieved context."""
+    """Generate an answer using retrieved context with GPT-4.1."""
     # Format context with source references
     context_parts = []
     for i, chunk in enumerate(context_chunks, 1):
@@ -172,7 +180,7 @@ def generate_answer(query: str, context_chunks: list) -> str:
     context = "\n\n".join(context_parts)
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[
             {
                 "role": "system",
