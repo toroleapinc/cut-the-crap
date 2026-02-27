@@ -24,8 +24,10 @@
 12. Same task across 3 AIs — compare
 13. Upload a doc + image, ask questions
 
-### Part 6: OpenClaw & Setup
-14. Meet OpenClaw — live demo on phone
-15. Switch models, show cost
-16. Setup guide: WSL (Windows) + macOS
-17. Cheat sheet + Q&A
+### Part 6: Getting Ready for OpenClaw
+14. What is a Markdown file? (and why AI tools love it)
+15. Linux survival kit: terminal basics (cd, ls, cat, nano)
+16. Meet OpenClaw — live demo on phone
+17. Switch models, show cost
+18. Setup guide: WSL (Windows) + macOS
+19. Cheat sheet + Q&A
