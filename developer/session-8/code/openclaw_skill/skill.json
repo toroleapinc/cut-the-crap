@@ -1,0 +1,94 @@
+{
+  "name": "code-snippets",
+  "version": "1.0.0",
+  "description": "Save, search, and manage code snippets through your AI assistant",
+  "author": "student",
+  "main": "index.js",
+  "tools": [
+    {
+      "name": "save_snippet",
+      "description": "Save a code snippet with a title, language, and optional tags",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short descriptive title for the snippet"
+          },
+          "code": {
+            "type": "string",
+            "description": "The code content"
+          },
+          "language": {
+            "type": "string",
+            "description": "Programming language (e.g., python, javascript, sql)"
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Optional tags for categorization"
+          }
+        },
+        "required": ["title", "code", "language"]
+      }
+    },
+    {
+      "name": "search_snippets",
+      "description": "Search saved snippets by keyword or tag",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search keyword (matches title, code, tags)"
+          },
+          "language": {
+            "type": "string",
+            "description": "Filter by programming language"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Filter by tag"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_snippets",
+      "description": "List recent code snippets",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Number of snippets to return (default: 10)"
+          },
+          "language": {
+            "type": "string",
+            "description": "Filter by programming language"
+          }
+        }
+      }
+    },
+    {
+      "name": "delete_snippet",
+      "description": "Delete a snippet by its ID",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The snippet ID to delete"
+          }
+        },
+        "required": ["id"]
+      }
+    }
+  ],
+  "config": {
+    "STORAGE_PATH": {
+      "description": "Path to store snippets (default: ./snippets.json)",
+      "required": false
+    }
+  }
+}
