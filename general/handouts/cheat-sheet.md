@@ -48,6 +48,22 @@ Before trusting AI on **facts**:
 
 **AI is great at thinking, mediocre at remembering.**
 
+## Privacy: ALL Providers Train on Your Chats by Default
+
+**Free AND paid users** — you must opt out manually:
+
+| Provider | Default | How to Opt Out |
+|----------|---------|---------------|
+| **ChatGPT** (Free/Plus/Pro) | Training ON | Settings > Data Controls > "Improve the model for everyone" → OFF |
+| **Claude** (Free/Pro/Max) | Training ON (since Sept 2025) | Settings > Privacy > "Help improve Claude" → OFF |
+| **Gemini** | Training ON | Profile > Gemini Apps Activity → OFF |
+| **Business/Enterprise** | Training OFF by default | Verify with your IT department |
+| **API usage** | Generally NOT trained on | Check provider terms |
+
+⚠️ Even after opting out, providers keep logs for safety/legal (~30 days).
+
+**Never paste into AI:** passwords, API keys, credit card numbers, medical/legal records, trade secrets.
+
 ## Two Ways to Authenticate: OAuth vs API Key
 
 ### OAuth (Use Your Existing Subscription)
